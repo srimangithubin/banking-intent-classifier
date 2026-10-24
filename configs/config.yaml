@@ -1,0 +1,13 @@
+project:
+  random_state: 42
+
+data:
+  raw_train_path: data/raw/train.csv
+  raw_test_path: data/raw/test.csv
+
+  processed_train_path: data/processed/train.csv
+  processed_validation_path: data/processed/validation.csv
+  processed_test_path: data/processed/test.csv
+
+split:
+  validation_size: 0.15

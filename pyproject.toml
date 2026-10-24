@@ -1,0 +1,41 @@
+[project]
+name = "banking-intent-classifier"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Srimanreddy M", email = "srimanreddymuddasani@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "datasets>=5.0.1",
+    "gensim>=4.4.0",
+    "joblib==1.6.0",
+    "matplotlib>=3.11.1",
+    "numpy==2.5.3",
+    "scipy==1.18.1",
+    "pandas>=3.0.5",
+    "pyyaml>=6.0.3",
+    "scikit-learn==1.9.1",
+    "seaborn>=0.13.2",
+    "fastapi==0.159.1",
+    "uvicorn==0.54.0",
+    "pydantic==2.14.1",
+]
+
+[project.scripts]
+banking-intent-classifier = "banking_intent_classifier:main"
+
+[build-system]
+requires = ["uv_build>=0.12.0,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+    "jupyter>=1.1.1",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.16.6",
+    'httpx2',
+]

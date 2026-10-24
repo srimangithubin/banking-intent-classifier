@@ -1,0 +1,22 @@
+# Local Python environment
+.venv/
+
+# Git repository
+.git/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Development and experiments
+.pytest_cache/
+.ruff_cache/
+notebooks/
+tests/
+
+# Training data
+data/
+
+# Unnecessary generated outputs
+artifacts/metrics/
+artifacts/figures/
