@@ -28,3 +28,10 @@ jobs:
         run: |
           python -m pip install . pytest httpx2 ruff
           python -m pip check
+
+      - name: Test BANKING77 FastAPI
+        env:
+          BANKING77_MODEL_PATH: ${{ github.workspace }}/artifacts/models/banking_intent_classifier_model.joblib
+        run: |
+          python -c "import banking_intent_classifier.models.predict as p; print('Imported from:', p.__file__); print('Model:', p.MODEL_PATH); print('Exists:', p.MODEL_PATH.is_file())"
+          python -m pytest tests/integration/test_api.py -v
