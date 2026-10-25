@@ -26,5 +26,5 @@ jobs:
           echo "BANKING77 runner is ready"
       - name: Install project dependencies
         run: |
-          python -m pip install .pytest httpx2 ruff
+          python -m pip install . pytest httpx2 ruff
           python -m pip check
