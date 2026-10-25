@@ -12,4 +12,15 @@ jobs:
 
     steps:
       - name: Verify GitHub runner
-        run: echo "GitHub Actions is running for BANKING77"
+        uses: actions/checkout@v7
+
+      - name: setup python 
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      
+      - name: Verify environment
+        run: |
+          python --version
+          ls -la
+          echo "BANKING77 runner is ready"
