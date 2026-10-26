@@ -3,7 +3,6 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
-
 from sklearn import pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import FunctionTransformer, Pipeline

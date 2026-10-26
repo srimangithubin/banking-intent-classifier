@@ -1,6 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
+
 from banking_intent_classifier.api.main import app
+
 
 @pytest.fixture(scope="module")
 def client():

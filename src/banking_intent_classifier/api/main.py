@@ -1,9 +1,10 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
 
+from fastapi import FastAPI, Request
 from pydantic import BaseModel, ConfigDict, Field
 
 from banking_intent_classifier.models.predict import load_model, predict_intent
+
 
 class PredictionRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)

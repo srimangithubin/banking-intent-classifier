@@ -1,11 +1,8 @@
 from pathlib import Path
+
 import joblib
 import pandas as pd
-from sklearn.metrics import (
-    accuracy_score,
-    classification_report,
-    f1_score
-)
+from sklearn.metrics import accuracy_score, classification_report, f1_score
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 TEST_PATH = (

@@ -1,5 +1,6 @@
 from banking_intent_classifier.models.predict import load_model, predict_intent
 
+
 def test_predict_intent_returns_string():
     model = load_model()
     prediction = predict_intent(
