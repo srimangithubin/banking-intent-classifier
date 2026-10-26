@@ -4,6 +4,8 @@ name: BANKING77 CI
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -35,3 +37,9 @@ jobs:
         run: |
           python -c "import banking_intent_classifier.models.predict as p; print('Imported from:', p.__file__); print('Model:', p.MODEL_PATH); print('Exists:', p.MODEL_PATH.is_file())"
           python -m pytest tests/integration/test_api.py -v
+      
+      - name: Check Pyhtoon code with Ruff
+        run: python -m ruff check src tests
+
+      - name: Build Docker image
+        run: docker build -t banking77_api:ci . 
