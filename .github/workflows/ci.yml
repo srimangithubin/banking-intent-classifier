@@ -8,8 +8,12 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
-  hello:
+  quality:
     runs-on: ubuntu-latest
 
     steps:
