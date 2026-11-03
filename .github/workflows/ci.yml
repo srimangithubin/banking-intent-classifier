@@ -49,13 +49,13 @@ jobs:
         run: docker build -t banking77_api:ci . 
 
       - name: Login to Github Container Registry
-        if: github.event_name == "push" && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GCHR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: echo "$GCHR_TOKEN" | docker login gchr.io -u "GITHUB_ACTOR" --password-stdin
 
       - name: Publish Docker image to GHCR
-        if: github.event_name == "push" && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           IMAGE="ghcr.io/$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]'):latest"
           docker tag banking77-api:ci "$IMAGE"
