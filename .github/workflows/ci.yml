@@ -58,6 +58,6 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           IMAGE="ghcr.io/$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]'):latest"
-          docker tag banking77-api:ci "$IMAGE"
+          docker tag banking77_api:ci "$IMAGE"
           docker push "$IMAGE"
         
