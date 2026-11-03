@@ -17,47 +17,68 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Verify GitHub runner
+      # Step 1: Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: setup python 
+      # Step 2: Set up Python
+      - name: Set up Python
         uses: actions/setup-python@v7
         with:
           python-version: '3.13'
-      
+
+      # Step 3: Verify runner environment
       - name: Verify environment
         run: |
           python --version
           ls -la
           echo "BANKING77 runner is ready"
+
+      # Step 4: Install dependencies
       - name: Install project dependencies
         run: |
           python -m pip install . pytest httpx2 ruff
           python -m pip check
 
-      - name: Test BANKING77 FastAPI
+      # Step 5: Run all automated tests
+      - name: Test BANKING77
         env:
           BANKING77_MODEL_PATH: ${{ github.workspace }}/artifacts/models/banking_intent_classifier_model.joblib
         run: |
-          python -c "import banking_intent_classifier.models.predict as p; print('Imported from:', p.__file__); print('Model:', p.MODEL_PATH); print('Exists:', p.MODEL_PATH.is_file())"
-          python -m pytest tests/integration/test_api.py -v
-      
-      - name: Check Pyhtoon code with Ruff
+          python -c "import banking_intent_classifier.models.predict as p; print('Imported from:', p.__file__); print('Model:', p.MODEL_PATH); print('Exists:', p.MODEL_PATH.is_file()); assert p.MODEL_PATH.is_file()"
+          python -m pytest tests/ -v
+
+      # Step 6: Check code quality
+      - name: Check Python code with Ruff
         run: python -m ruff check src tests
 
+      # Step 7: Build Docker image
       - name: Build Docker image
-        run: docker build -t banking77_api:ci . 
+        run: |
+          docker build \
+            --label "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
+            -t banking77-api:ci .
 
-      - name: Login to Github Container Registry
+      # Step 8: Authenticate with GHCR
+      - name: Login to GitHub Container Registry
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+        run: |
+          echo "$GHCR_TOKEN" | docker login ghcr.io \
+            -u "$GITHUB_ACTOR" \
+            --password-stdin
 
+      # Step 9: Publish image with commit SHA
       - name: Publish Docker image to GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          IMAGE="ghcr.io/$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]'):latest"
-          docker tag banking77_api:ci "$IMAGE"
+          REPOSITORY=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
+          IMAGE="ghcr.io/${REPOSITORY}:${GITHUB_SHA}"
+
+          echo "Publishing image: $IMAGE"
+
+          docker tag banking77-api:ci "$IMAGE"
           docker push "$IMAGE"
-        
+
+          echo "Successfully published: $IMAGE"
