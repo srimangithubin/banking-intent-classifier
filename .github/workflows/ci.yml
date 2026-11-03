@@ -57,7 +57,7 @@ jobs:
       - name: Publish Docker image to GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          IMAGE="ghcr.io/$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]'):latest"
+          IMAGE="ghcr.io/$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]'):${GITHUB_SHA}"
           docker tag banking77_api:ci "$IMAGE"
           docker push "$IMAGE"
         
