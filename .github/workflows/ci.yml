@@ -82,8 +82,9 @@ jobs:
           docker push "$IMAGE"
 
           echo "Successfully published: $IMAGE"
+
   deploy:
-    name: Deploy to Axure
+    name: Deploy to Azure
     needs: quality
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -99,54 +100,53 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      
 
-      # Step 11: Install container Apps commands
-      - name: Install Azure Container Apps extenstion
+      # Step 11: Install Container Apps commands
+      - name: Install Azure Container Apps extension
         run: az extension add --name containerapp --upgrade
 
-      # step 12: Deploy our published docker image
-      - name: Deploy new image to Azure 
+      # Step 12: Deploy our published Docker image
+      - name: Deploy new image to Azure
         run: |
           REPOSITORY=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
-          IMAGE='ghcr.io/${REPOSITORY}:${GITHUB_SHA}'
+          IMAGE="ghcr.io/${REPOSITORY}:${GITHUB_SHA}"
 
           echo "Deploying image: $IMAGE"
 
           az containerapp update \
             --name banking77-api \
-            --resource-group banking77-dev \
+            --resource-group rg-banking77-dev \
             --image "$IMAGE"
 
       # Step 13: Verify deployed image
       - name: Verify deployed image
         run: |
           REPOSITORY=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
-          EXPECTED='ghcr.io/${REPOSITORY}:${GITHUB_SHA}'
+          EXPECTED="ghcr.io/${REPOSITORY}:${GITHUB_SHA}"
 
-          ACTTUAL=$(az containerapp show \
+          ACTUAL=$(az containerapp show \
             --name banking77-api \
-            --resource-group banking77-dev \
-            --query properties.template.containers[0].image'\
+            --resource-group rg-banking77-dev \
+            --query 'properties.template.containers[0].image' \
             -o tsv)
 
           echo "Expected image: $EXPECTED"
-          echo "configured image: $ACTTUAL"
+          echo "Configured image: $ACTUAL"
 
-          test "$EXPECTED" = "$ACTTUAL" 
+          test "$EXPECTED" = "$ACTUAL"
 
-      # step 14: Verify API health
+      # Step 14: Verify API health
       - name: Verify API health
         run: |
           FQDN=$(az containerapp show \
             --name banking77-api \
             --resource-group rg-banking77-dev \
-            --query properties.configuration.ingress.fqdn'\
+            --query 'properties.configuration.ingress.fqdn' \
             -o tsv)
 
-            test -n "$FQDN"
+          test -n "$FQDN"
 
-            curl --fail --show-error --silent \
+          curl --fail --show-error --silent \
             --retry 6 \
             --retry-delay 10 \
             --retry-all-errors \
