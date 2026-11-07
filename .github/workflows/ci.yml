@@ -103,7 +103,7 @@ jobs:
 
       # Step 11: Install container Apps commands
       - name: Install Azure Container Apps extenstion
-        run: az extention add --name containerapp --upgrade
+        run: az extension add --name containerapp --upgrade
 
       # step 12: Deploy our published docker image
       - name: Deploy new image to Azure 
