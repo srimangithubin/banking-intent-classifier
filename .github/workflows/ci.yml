@@ -109,7 +109,7 @@ jobs:
       - name: Deploy new image to Azure 
         run: |
           REPOSITORY=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
-          IMAGE = 'ghcr.io/${REPOSITORY}:${GITHUB_SHA}'
+          IMAGE='ghcr.io/${REPOSITORY}:${GITHUB_SHA}'
 
           echo "Deploying image: $IMAGE"
 
@@ -121,10 +121,10 @@ jobs:
       # Step 13: Verify deployed image
       - name: Verify deployed image
         run: |
-          REPOSITORY = $(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
-          EXPECTED = 'ghcr.io/${REPOSITORY}:${GITHUB_SHA}'
+          REPOSITORY=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
+          EXPECTED='ghcr.io/${REPOSITORY}:${GITHUB_SHA}'
 
-          ACTTUAL = $(az containerapp show \
+          ACTTUAL=$(az containerapp show \
             --name banking77-api \
             --resource-group banking77-dev \
             --query properties.template.containers[0].image'\
@@ -138,7 +138,7 @@ jobs:
       # step 14: Verify API health
       - name: Verify API health
         run: |
-          FQDN = $(az containerapp show \
+          FQDN=$(az containerapp show \
             --name banking77-api \
             --resource-group rg-banking77-dev \
             --query properties.configuration.ingress.fqdn'\
