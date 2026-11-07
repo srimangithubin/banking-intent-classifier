@@ -83,16 +83,72 @@ jobs:
 
           echo "Successfully published: $IMAGE"
   deploy:
+    name: Deploy to Axure
     needs: quality
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
 
     steps:
+      # Step 10: Authenticate to Azure
       - name: Log in to Azure
         uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+
+      # Step 11: Install container Apps commands
+      - name: Install Azure Container Apps extenstion
+        run: az extention add --name containerapp --upgrade
+
+      # step 12: Deploy our published docker image
+      - name: Deploy new image to Azure 
+        run: |
+          REPOSITORY=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
+          IMAGE = 'ghcr.io/${REPOSITORY}:${GITHUB_SHA}'
+
+          echo "Deploying image: $IMAGE"
+
+          az containerapp update \
+            --name banking77-api \
+            --resource-group banking77-dev \
+            --image "$IMAGE"
+
+      # Step 13: Verify deployed image
+      - name: Verify deployed image
+        run: |
+          REPOSITORY = $(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
+          EXPECTED = 'ghcr.io/${REPOSITORY}:${GITHUB_SHA}'
+
+          ACTTUAL = $(az containerapp show \
+            --name banking77-api \
+            --resource-group banking77-dev \
+            --query properties.template.containers[0].image'\
+            -o tsv)
+
+          echo "Expected image: $EXPECTED"
+          echo "configured image: $ACTTUAL"
+
+          test "$EXPECTED" = "$ACTTUAL" 
+
+      # step 14: Verify API health
+      - name: Verify API health
+        run: |
+          FQDN = $(az containerapp show \
+            --name banking77-api \
+            --resource-group rg-banking77-dev \
+            --query properties.configuration.ingress.fqdn'\
+            -o tsv)
+
+            test -n "$FQDN"
+
+            curl --fail --show-error --silent \
+            --retry 6 \
+            --retry-delay 10 \
+            --retry-all-errors \
+            --max-time 20 \
+            "https://${FQDN}/health"
