@@ -4,6 +4,10 @@ name: BANKING77 CI
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'README.md'
+      - 'architecture.png'
+      - 'docs/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
