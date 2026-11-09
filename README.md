@@ -22,7 +22,7 @@ An end-to-end machine learning project that classifies customer banking question
 
 ## Architecture
 
-![BANKING77 CI/CD and Azure architecture](architecture.png)
+![BANKING77 CI/CD and Azure architecture](docs/architecture.png)
 
 **Deployment flow:** push to `main` → install and test → Ruff lint → Docker build → publish SHA-tagged image to GHCR → GitHub OIDC login to Azure → update Container App → verify the configured image and `/health` endpoint.
 
